@@ -1,0 +1,51 @@
+version: 2.1
+
+orbs:
+  agentic-cli: cci-labs/agentic-cli@0.0.1
+
+jobs:
+  install-ai-clis:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      
+      # Install Claude CLI
+      - agentic-cli/install_claude:
+          version: latest
+          
+      # Install Gemini CLI
+      - agentic-cli/install_gemini:
+          version: latest
+          
+      # Install Rovo CLI (Atlassian CLI)
+      - agentic-cli/install_rovo:
+          version: latest
+          
+      # Verify all installations
+      - agentic-cli/verify_installation:
+          providers: all
+          
+      # Print versions of all installed CLIs
+      - run:
+          name: "Print Claude CLI Version"
+          command: |
+            echo "=== Claude CLI Version ==="
+            claude --version || echo "Claude CLI not found in PATH"
+            
+      - run:
+          name: "Print Gemini CLI Version"
+          command: |
+            echo "=== Gemini CLI Version ==="
+            gemini --version || echo "Gemini CLI not found in PATH"
+            
+      - run:
+          name: "Print Rovo CLI Version"
+          command: |
+            echo "=== Rovo CLI Version ==="
+            acli --version || echo "Rovo CLI not found in PATH"
+
+workflows:
+  ai-cli-setup:
+    jobs:
+      - install-ai-clis 
