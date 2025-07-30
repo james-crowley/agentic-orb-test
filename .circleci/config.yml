@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.1
+  agentic-cli: cci-labs/agentic-cli@0.0.2
 
 jobs:
   install-ai-clis:
@@ -22,10 +22,6 @@ jobs:
       - agentic-cli/install_rovo:
           version: latest
           
-      # Verify all installations
-      - agentic-cli/verify_installation:
-          providers: all
-          
       # Print versions of all installed CLIs
       - run:
           name: "Print Claude CLI Version"
@@ -45,7 +41,42 @@ jobs:
             echo "=== Rovo CLI Version ==="
             acli --version || echo "Rovo CLI not found in PATH"
 
+
+  test-claude-mcp:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - agentic-cli/setup_claude:
+          version: "latest"
+          node_version: "20"
+          api_key_var: "ANTHROPIC_API_KEY"
+      - agentic-cli/prompt_claude:
+          prompt: |
+            Please use the CircleCI MCP server to analyze our pipeline status.
+            To determine what project to look up please look at the environment variables for CircleCI. 
+          model: "sonnet"
+          output_format: "text"
+          timeout: 600
+          save_output: true
+          mcp_config: |
+            {
+              "mcpServers": {
+                "circleci-mcp-server": {
+                  "command": "npx",
+                  "args": ["-y", "@circleci/mcp-server-circleci"],
+                  "env": {
+                    "CIRCLECI_TOKEN": "${CIRCLECI_TOKEN}",
+                    "CIRCLECI_BASE_URL": "https://circleci.com"
+                  }
+                }
+              }
+            }
+          allowed_tools: "Bash,Edit,FileRead,WebSearch,mcp__circleci-mcp-server"
+
+
 workflows:
   ai-cli-setup:
     jobs:
-      - install-ai-clis 
+      - install-ai-clis
+      - test-claude-mcp
