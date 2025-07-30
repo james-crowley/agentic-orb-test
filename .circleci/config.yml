@@ -79,4 +79,5 @@ workflows:
   ai-cli-setup:
     jobs:
       - install-ai-clis
-      - test-claude-mcp
+      - test-claude-mcp:
+          context: agentic
