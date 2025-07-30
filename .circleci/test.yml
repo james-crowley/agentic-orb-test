@@ -1,0 +1,31 @@
+version: 2.1
+
+orbs:
+  agentic-cli: cci-labs/agentic-cli@0.0.2
+
+jobs:
+  install-ai-clis:
+    docker:
+      - image: cimg/base:current
+    environment:
+      WEBHOOK_BODY: << pipeline.trigger_parameters.webhook.body >>
+      TRIGGER_SOURCE: << pipeline.trigger_source >>
+      EVENT_TYPE: << pipeline.trigger_parameters.circleci.event_type >>
+      EVENT_NAME: << pipeline.event.name >>
+      EVENT_ACTION: << pipeline.event.action >>
+    steps:
+      - checkout      
+      # Print versions of all installed CLIs
+      - run:
+          name: "Print Certain Environment Variables"
+          command: |
+            echo "WEBHOOK_BODY: $WEBHOOK_BODY"
+            echo "TRIGGER_SOURCE: $TRIGGER_SOURCE"
+            echo "EVENT_TYPE: $EVENT_TYPE"
+            echo "EVENT_NAME: $EVENT_NAME"
+            echo "EVENT_ACTION: $EVENT_ACTION"
+
+workflows:
+  ai-cli-setup:
+    jobs:
+      - install-ai-clis
