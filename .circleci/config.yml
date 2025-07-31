@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.2
+  agentic-cli: cci-labs/agentic-cli@0.0.9
 
 jobs:
   install-ai-clis:
@@ -10,37 +10,63 @@ jobs:
     steps:
       - checkout
       
-      # Install Claude CLI
+      # Install Claude CLI with error handling
+      - run:
+          name: "Install Claude CLI"
+          command: |
+            echo "Installing Claude CLI..."
       - agentic-cli/install_claude:
           version: latest
           
-      # Install Gemini CLI
+      # Install Gemini CLI with error handling
+      - run:
+          name: "Install Gemini CLI"
+          command: |
+            echo "Installing Gemini CLI..."
       - agentic-cli/install_gemini:
           version: latest
           
-      # Install Rovo CLI (Atlassian CLI)
+      # Install Rovo CLI (Atlassian CLI) with error handling
+      - run:
+          name: "Install Rovo CLI"
+          command: |
+            echo "Installing Rovo CLI..."
       - agentic-cli/install_rovo:
           version: latest
           
-      # Print versions of all installed CLIs
+      # Verify all installations with proper error handling
       - run:
-          name: "Print Claude CLI Version"
+          name: "Verify Claude CLI Installation"
           command: |
             echo "=== Claude CLI Version ==="
-            claude --version || echo "Claude CLI not found in PATH"
+            if claude --version; then
+              echo "✅ Claude CLI installed successfully"
+            else
+              echo "❌ Claude CLI installation failed"
+              exit 1
+            fi
             
       - run:
-          name: "Print Gemini CLI Version"
+          name: "Verify Gemini CLI Installation"
           command: |
             echo "=== Gemini CLI Version ==="
-            gemini --version || echo "Gemini CLI not found in PATH"
+            if gemini --version; then
+              echo "✅ Gemini CLI installed successfully"
+            else
+              echo "❌ Gemini CLI installation failed"
+              exit 1
+            fi
             
       - run:
-          name: "Print Rovo CLI Version"
+          name: "Verify Rovo CLI Installation"
           command: |
             echo "=== Rovo CLI Version ==="
-            acli --version || echo "Rovo CLI not found in PATH"
-
+            if acli --version; then
+              echo "✅ Rovo CLI installed successfully"
+            else
+              echo "❌ Rovo CLI installation failed"
+              exit 1
+            fi
 
   test-claude-mcp:
     docker:
@@ -54,7 +80,7 @@ jobs:
       - agentic-cli/prompt_claude:
           prompt: |
             Please use the CircleCI MCP server to analyze our pipeline status.
-            To determine what project to look up please look at the environment variables for CircleCI. 
+            To determine what project to look up please look at the environment variables for CircleCI.
           model: "sonnet"
           output_format: "text"
           timeout: 600
@@ -74,10 +100,11 @@ jobs:
             }
           allowed_tools: "Bash,Edit,FileRead,WebSearch,mcp__circleci-mcp-server"
 
-
 workflows:
   ai-cli-setup:
     jobs:
       - install-ai-clis
       - test-claude-mcp:
           context: agentic
+          requires:
+            - install-ai-clis
