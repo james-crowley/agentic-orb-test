@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.4
+  agentic-cli: cci-labs/agentic-cli@0.0.5
 
 workflows:
   pr_review_workflow:
