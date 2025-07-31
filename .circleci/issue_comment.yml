@@ -1,91 +1,15 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.4
-
-jobs:
-  issue_comment_handler:
-    executor: agentic-cli/docker_node
-    parameters:
-      github_api_token_var:
-        default: GITHUB_API_TOKEN
-        description: Environment variable name containing the GitHub API token
-        type: string
-      circleci_token_var:
-        default: CIRCLECI_TOKEN  
-        description: Environment variable name containing the CircleCI API token
-        type: string
-      trigger_phrase:
-        default: "/agentic-orb"
-        description: Trigger phrase to look for in comments
-        type: string
-      allowed_users:
-        default: ""
-        description: Comma-separated list of specific users allowed to trigger (optional)
-        type: string
-    environment:
-      WEBHOOK_BODY: << pipeline.trigger_parameters.webhook.body >>
-    steps:
-      - checkout
-      
-      # First, validate the GitHub issue comment webhook and check for trigger phrase
-      - agentic-cli/trigger_issue_comment:
-          webhook_body: << pipeline.trigger_parameters.webhook.body >>
-          trigger_phrase: << parameters.trigger_phrase >>
-          require_trigger_phrase: true
-          allowed_associations: "OWNER,MEMBER,COLLABORATOR"
-          allowed_users: << parameters.allowed_users >>
-          debug_mode: true
-      
-      # If the trigger validation passes, respond to the comment using Claude
-      - agentic-cli/prompt_claude:
-          model: sonnet
-          permission_mode: acceptEdits
-          save_output: true
-          timeout: 1800
-          allowed_tools: "Bash,Edit,FileRead,WebSearch,mcp__github__get_issue,mcp__github__create_issue_comment,mcp__github__get_repository,mcp__circleci-mcp-server"
-          mcp_config: |
-            {
-              "mcpServers": {
-                "github": {
-                  "url": "https://api.githubcopilot.com/mcp/",
-                  "headers": {
-                    "Authorization": "Bearer ${<< parameters.github_api_token_var >>}"
-                  }
-                },
-                "circleci-mcp-server": {
-                  "command": "npx",
-                  "args": ["-y", "@circleci/mcp-server-circleci"],
-                  "env": {
-                    "CIRCLECI_TOKEN": "${<< parameters.circleci_token_var >>}",
-                    "CIRCLECI_BASE_URL": "https://circleci.com"
-                  }
-                }
-              }
-            }
-          prompt: |
-            I'm responding to a GitHub issue comment. You can find out more details by parsing and looking
-            at the webhook body. Which is in the environment variable WEBHOOK_BODY.
-            
-            The specific command/request after the trigger phrase is:
-            ${AGENTIC_COMMAND}
-            
-            Please help respond to this comment appropriately. Use the GitHub MCP tools to:
-            1. Get more context about the issue if needed
-            2. Provide a helpful, informative response  
-            3. Post a reply comment to the issue
-            
-            If the request involves code analysis, repository information, or CI/CD insights, 
-            use the available MCP tools to gather relevant information before responding.
-            
-            Be helpful, professional, and provide actionable information where possible.
+  agentic-cli: cci-labs/agentic-cli@0.0.6
 
 workflows:
   issue_comment_workflow:
     jobs:
-      - issue_comment_handler:
-          context: agentic  # Contains ANTHROPIC_API_KEY, CIRCLECI_TOKEN, and GITHUB_API_TOKEN
-          # Optional: Override default trigger phrase
-          # trigger_phrase: "/my-custom-trigger"
-          # Optional: Specify allowed users instead of associations
-          # allowed_users: "user1,user2,user3"
+      - agentic-cli/issue_review_claude:
+          context: agentic
+          webhook_body: << pipeline.trigger_parameters.webhook.body >>
+          claude_model: sonnet
+          trigger_phrase: "/agentic-orb"
+          allowed_associations: "OWNER,MEMBER,COLLABORATOR"
+          debug_mode: true

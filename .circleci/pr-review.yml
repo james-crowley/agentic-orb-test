@@ -1,16 +1,18 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.5
+  agentic-cli: cci-labs/agentic-cli@0.0.6
 
 workflows:
   pr_review_workflow:
     jobs:
       - agentic-cli/pr_review_claude:
-          context: agentic
+          context: agentic  # Contains ANTHROPIC_API_KEY, CIRCLECI_TOKEN, and GITHUB_API_TOKEN
           webhook_body: << pipeline.trigger_parameters.webhook.body >>
           claude_model: sonnet
           allowed_actions: opened,synchronize
           allowed_associations: OWNER,MEMBER,COLLABORATOR
+          github_api_token_var: GITHUB_API_TOKEN
+          circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
           exclude_draft: false
