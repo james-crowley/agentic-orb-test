@@ -15,6 +15,7 @@ workflows:
           github_api_token_var: GITHUB_API_TOKEN
           circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
+          allowed_tools: Bash,Edit,FileRead,WebSearch,mcp__github__add_issue_comment,mcp__github__create_issue_comment,mcp__github__get_issue,mcp__github__get_issue_comments,mcp__github__search_issues,mcp__github__update_issue,mcp__github__add_sub_issue,mcp__github__list_issues,mcp__github__list_sub_issues,mcp__github__reprioritize_sub_issue,mcp__github__get_pull_request,mcp__github__get_pull_request_diff,mcp__github__get_pull_request_files,mcp__github__create_pending_pull_request_review,mcp__github__add_comment_to_pending_review,mcp__github__submit_pending_pull_request_review,mcp__circleci-mcp-server
           prompt: |
             🚨 CRITICAL REQUIREMENT: You MUST create actual GitHub issue comments. This is not optional.
 
@@ -34,6 +35,8 @@ workflows:
             - Code examples, commands, or configuration if relevant
             - Links to documentation or related resources
             - Clear next steps or follow-up actions
+            - Reference to related PRs, issues, or code if applicable
+            - Issue management actions taken (labels, sub-issues, assignments)
 
             💡 ANALYSIS FOCUS:
             - What specific problem is the user trying to solve?
@@ -42,12 +45,33 @@ workflows:
             - What's the best way to help this specific user?
             - Should you suggest labels, assignees, or escalation?
 
-            🔧 AVAILABLE TOOLS - USE THEM:
+            🔧 AVAILABLE TOOLS - USE THEM ALL AS NEEDED:
+            
+            📋 CORE ISSUE TOOLS (ALWAYS USE):
             - mcp__github__get_issue ← Get full issue context
             - mcp__github__get_issue_comments ← Get discussion history  
             - mcp__github__add_issue_comment ← CREATE YOUR RESPONSE (REQUIRED!)
-            - mcp__github__search_issues ← Find related issues
-            - mcp__github__update_issue ← Update labels/assignees if needed
+            - mcp__github__create_issue_comment ← Alternative comment creation tool
+            
+            🔍 RESEARCH & ANALYSIS TOOLS:
+            - mcp__github__search_issues ← Find related/duplicate issues
+            - mcp__github__list_issues ← Browse repository issues
+            - mcp__github__update_issue ← Update labels/assignees/status
+            
+            📦 SUB-ISSUE MANAGEMENT TOOLS:
+            - mcp__github__add_sub_issue ← Create sub-tasks if needed
+            - mcp__github__list_sub_issues ← List existing sub-issues
+            - mcp__github__reprioritize_sub_issue ← Adjust sub-issue priorities
+            
+            🔧 PULL REQUEST TOOLS (IF ISSUE RELATES TO CODE):
+            - mcp__github__get_pull_request ← Get PR details if issue mentions PR
+            - mcp__github__get_pull_request_diff ← Analyze code changes
+            - mcp__github__get_pull_request_files ← Review specific files
+            - mcp__github__create_pending_pull_request_review ← Start code review
+            - mcp__github__add_comment_to_pending_review ← Add review comments
+            - mcp__github__submit_pending_pull_request_review ← Submit review
+            
+            ⚙️ CI/CD TOOLS:
             - mcp__circleci-mcp-server ← Check CI/CD if relevant
 
             ⚠️ FAILURE CONDITIONS:
