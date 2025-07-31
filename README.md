@@ -1,4 +1,4 @@
-# agentic-orb-test
+# Agentic Orb Test
 
 A comprehensive testing project for the [cci-labs/agentic-cli](https://circleci.com/developer/orbs/orb/cci-labs/agentic-cli) CircleCI orb, demonstrating AI-powered automation workflows for GitHub repositories.
 
