@@ -15,11 +15,11 @@ workflows:
           github_api_token_var: GITHUB_API_TOKEN
           circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
-          allowed_tools: Bash,Edit,FileRead,WebSearch,mcp__github__add_issue_comment,mcp__github__create_issue_comment,mcp__github__get_issue,mcp__github__get_issue_comments,mcp__github__search_issues,mcp__github__update_issue,mcp__github__add_sub_issue,mcp__github__list_issues,mcp__github__list_sub_issues,mcp__github__reprioritize_sub_issue,mcp__github__get_pull_request,mcp__github__get_pull_request_diff,mcp__github__get_pull_request_files,mcp__github__create_pending_pull_request_review,mcp__github__add_comment_to_pending_review,mcp__github__submit_pending_pull_request_review,mcp__circleci-mcp-server
+          allowed_tools: Bash,Edit,FileRead,WebSearch,mcp__github,mcp__circleci-mcp-server
           prompt: |
             🚨 CRITICAL REQUIREMENT: You MUST create actual GitHub issue comments. This is not optional.
 
-            MANDATORY TASK: Analyze this GitHub issue and IMMEDIATELY create helpful responses using GitHub MCP tools.
+            MANDATORY TASK: Analyze this GitHub issue and IMMEDIATELY create helpful responses using GitHub MCP tools. Use any tools available to you.
 
             📋 REQUIRED WORKFLOW:
             1. ✅ FIRST: Use mcp__github__get_issue to fetch the complete issue details
