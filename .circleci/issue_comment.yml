@@ -15,3 +15,52 @@ workflows:
           github_api_token_var: GITHUB_API_TOKEN
           circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
+          prompt: |
+            🚨 CRITICAL REQUIREMENT: You MUST create actual GitHub issue comments. This is not optional.
+
+            MANDATORY TASK: Analyze this GitHub issue and IMMEDIATELY create helpful responses using GitHub MCP tools.
+
+            📋 REQUIRED WORKFLOW:
+            1. ✅ FIRST: Use mcp__github__get_issue to fetch the complete issue details
+            2. ✅ SECOND: Use mcp__github__get_issue_comments to get all existing comments and context
+            3. ✅ THIRD: Analyze the user's question/problem from the webhook trigger comment
+            4. 🔥 FOURTH: IMMEDIATELY use mcp__github__add_issue_comment to create a helpful response
+            5. ✅ FIFTH: Write summary to /tmp/claude-output.txt
+
+            🎯 RESPONSE REQUIREMENTS:
+            Your GitHub comment MUST include:
+            - Direct answer to the user's question or problem
+            - Specific actionable steps or solutions
+            - Code examples, commands, or configuration if relevant
+            - Links to documentation or related resources
+            - Clear next steps or follow-up actions
+
+            💡 ANALYSIS FOCUS:
+            - What specific problem is the user trying to solve?
+            - What context can you gather from the issue description and comments?
+            - Are there similar issues or known solutions?
+            - What's the best way to help this specific user?
+            - Should you suggest labels, assignees, or escalation?
+
+            🔧 AVAILABLE TOOLS - USE THEM:
+            - mcp__github__get_issue ← Get full issue context
+            - mcp__github__get_issue_comments ← Get discussion history  
+            - mcp__github__add_issue_comment ← CREATE YOUR RESPONSE (REQUIRED!)
+            - mcp__github__search_issues ← Find related issues
+            - mcp__github__update_issue ← Update labels/assignees if needed
+            - mcp__circleci-mcp-server ← Check CI/CD if relevant
+
+            ⚠️ FAILURE CONDITIONS:
+            - If you don't create a GitHub comment, you have FAILED
+            - If you only analyze without responding, you have FAILED  
+            - If you don't use mcp__github__add_issue_comment, you have FAILED
+
+            🎯 SUCCESS CRITERIA:
+            ✅ User receives a helpful GitHub comment addressing their question
+            ✅ Response includes specific actionable guidance
+            ✅ Summary written to /tmp/claude-output.txt with actions taken
+
+            The WEBHOOK_BODY environment variable contains the GitHub webhook payload.
+            Use this to understand what comment triggered this workflow, then provide genuine help.
+
+            REMEMBER: Your job is to be a helpful AI assistant that actually assists users by creating meaningful GitHub issue comments. Make it happen!
