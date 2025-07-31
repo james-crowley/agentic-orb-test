@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.3
+  agentic-cli: cci-labs/agentic-cli@0.0.4
 
 workflows:
   pr_review_workflow:
@@ -10,6 +10,7 @@ workflows:
           context: agentic
           webhook_body: << pipeline.trigger_parameters.webhook.body >>
           claude_model: sonnet
-          allowed_review_states: approved,changes_requested,commented
-          require_open_state: true
+          allowed_actions: opened,synchronize
+          allowed_associations: OWNER,MEMBER,COLLABORATOR
           debug_mode: true
+          exclude_draft: false
