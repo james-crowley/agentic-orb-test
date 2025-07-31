@@ -1,12 +1,12 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.7
+  agentic-cli: cci-labs/agentic-cli@0.0.8
 
 workflows:
   pr_review_workflow:
     jobs:
-      - agentic-cli/pr_review_claude:
+      - agentic-cli/pr_event_claude:
           context: agentic
           webhook_body: << pipeline.trigger_parameters.webhook.body >>
           claude_model: sonnet

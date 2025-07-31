@@ -1,15 +1,17 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.7
+  agentic-cli: cci-labs/agentic-cli@0.0.8
 
 workflows:
   issue_comment_workflow:
     jobs:
-      - agentic-cli/issue_review_claude:
+      - agentic-cli/issue_comment_claude:
           context: agentic
           webhook_body: << pipeline.trigger_parameters.webhook.body >>
           claude_model: sonnet
           trigger_phrase: "/agentic-orb"
           allowed_associations: "OWNER,MEMBER,COLLABORATOR"
+          github_api_token_var: GITHUB_API_TOKEN
+          circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
