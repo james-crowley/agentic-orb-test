@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.6
+  agentic-cli: cci-labs/agentic-cli@0.0.7
 
 workflows:
   issue_comment_workflow:
