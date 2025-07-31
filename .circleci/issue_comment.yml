@@ -6,6 +6,8 @@ orbs:
 jobs:
   issue_comment_handler:
     executor: agentic-cli/docker_node
+    environment:
+      WEBHOOK_BODY: << pipeline.trigger_parameters.webhook.body >>
     steps:
       - checkout
       
@@ -15,7 +17,7 @@ jobs:
           trigger_phrase: "/agentic-orb"
           require_trigger_phrase: true
           allowed_associations: "OWNER,MEMBER,COLLABORATOR"
-          debug_mode: false
+          debug_mode: true
       
       # If the trigger validation passes, respond to the comment using Claude
       - agentic-cli/prompt_claude:
@@ -44,14 +46,8 @@ jobs:
               }
             }
           prompt: |
-            I'm responding to a GitHub issue comment. Here are the details from the webhook:
-            
-            The comment was made by: ${GITHUB_COMMENT_USER}
-            On issue number: ${GITHUB_ISSUE_NUMBER}
-            In repository: ${GITHUB_REPO_NAME}
-            
-            The original comment body is:
-            ${GITHUB_COMMENT_BODY}
+            I'm responding to a GitHub issue comment. You can find out more details by parsing and looking
+            at the webhook body. Which is in the environment variable WEBHOOK_BODY.
             
             The specific command/request after the trigger phrase is:
             ${AGENTIC_COMMAND}
@@ -70,7 +66,4 @@ workflows:
   issue_comment_workflow:
     jobs:
       - issue_comment_handler:
-          context: agentic  # Contains ANTHROPIC_API_KEY, CIRCLECI_TOKEN, and GITHUB_API_TOKEN
-          filters:
-            branches:
-              ignore: /.*/  # Only run on webhook triggers, not branch pushes 
+          context: agentic
