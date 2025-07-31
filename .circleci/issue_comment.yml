@@ -22,11 +22,11 @@ workflows:
             MANDATORY TASK: Analyze this GitHub issue and IMMEDIATELY create helpful responses using GitHub MCP tools. Use any tools available to you.
 
             📋 REQUIRED WORKFLOW:
-            1. ✅ FIRST: Use mcp__github__get_issue to fetch the complete issue details
-            2. ✅ SECOND: Use mcp__github__get_issue_comments to get all existing comments and context
-            3. ✅ THIRD: Analyze the user's question/problem from the webhook trigger comment
-            4. 🔥 FOURTH: IMMEDIATELY use mcp__github__add_issue_comment to create a helpful response
-            5. ✅ FIFTH: Write summary to /tmp/claude-output.txt
+            1. ✅ FIRST: Use mcp__github__get_issue to fetch the complete issue details. Make sure log what mcp tools you used.
+            2. ✅ SECOND: Use mcp__github__get_issue_comments to get all existing comments and context. Make sure log what mcp tools you used.
+            3. ✅ THIRD: Analyze the user's question/problem from the webhook trigger comment. Make sure log what mcp tools you used.
+            4. 🔥 FOURTH: IMMEDIATELY use mcp__github__add_issue_comment to create a helpful response. Make sure log what mcp tools you used.
+            5. ✅ FIFTH: Write summary to /tmp/claude-output.txt. Make sure log what mcp tools you used.
 
             🎯 RESPONSE REQUIREMENTS:
             Your GitHub comment MUST include:
@@ -82,7 +82,7 @@ workflows:
             🎯 SUCCESS CRITERIA:
             ✅ User receives a helpful GitHub comment addressing their question
             ✅ Response includes specific actionable guidance
-            ✅ Summary written to /tmp/claude-output.txt with actions taken
+            ✅ Summary written to /tmp/claude-output.txt with actions taken. Please also summarize what tools you accessed and how you used them.
 
             The WEBHOOK_BODY environment variable contains the GitHub webhook payload.
             Use this to understand what comment triggered this workflow, then provide genuine help.
