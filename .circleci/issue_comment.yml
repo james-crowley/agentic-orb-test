@@ -1,0 +1,76 @@
+version: 2.1
+
+orbs:
+  agentic-cli: cci-labs/agentic-cli@0.0.3
+
+jobs:
+  issue_comment_handler:
+    executor: agentic-cli/docker_node
+    steps:
+      - checkout
+      
+      # First, validate the GitHub issue comment webhook and check for trigger phrase
+      - agentic-cli/trigger_issue_comment:
+          webhook_body: << pipeline.trigger_parameters.webhook.body >>
+          trigger_phrase: "/agentic-orb"
+          require_trigger_phrase: true
+          allowed_associations: "OWNER,MEMBER,COLLABORATOR"
+          debug_mode: false
+      
+      # If the trigger validation passes, respond to the comment using Claude
+      - agentic-cli/prompt_claude:
+          model: sonnet
+          permission_mode: acceptEdits
+          save_output: true
+          timeout: 1800
+          allowed_tools: "Bash,Edit,FileRead,WebSearch,mcp__github__get_issue,mcp__github__create_issue_comment,mcp__github__get_repository,mcp__circleci-mcp-server"
+          mcp_config: |
+            {
+              "mcpServers": {
+                "github": {
+                  "url": "https://api.githubcopilot.com/mcp/",
+                  "headers": {
+                    "Authorization": "Bearer ${GITHUB_API_TOKEN}"
+                  }
+                },
+                "circleci-mcp-server": {
+                  "command": "npx",
+                  "args": ["-y", "@circleci/mcp-server-circleci"],
+                  "env": {
+                    "CIRCLECI_TOKEN": "${CIRCLECI_TOKEN}",
+                    "CIRCLECI_BASE_URL": "https://circleci.com"
+                  }
+                }
+              }
+            }
+          prompt: |
+            I'm responding to a GitHub issue comment. Here are the details from the webhook:
+            
+            The comment was made by: ${GITHUB_COMMENT_USER}
+            On issue number: ${GITHUB_ISSUE_NUMBER}
+            In repository: ${GITHUB_REPO_NAME}
+            
+            The original comment body is:
+            ${GITHUB_COMMENT_BODY}
+            
+            The specific command/request after the trigger phrase is:
+            ${AGENTIC_COMMAND}
+            
+            Please help respond to this comment appropriately. Use the GitHub MCP tools to:
+            1. Get more context about the issue if needed
+            2. Provide a helpful, informative response
+            3. Post a reply comment to the issue
+            
+            If the request involves code analysis, repository information, or CI/CD insights, 
+            use the available MCP tools to gather relevant information before responding.
+            
+            Be helpful, professional, and provide actionable information where possible.
+
+workflows:
+  issue_comment_workflow:
+    jobs:
+      - issue_comment_handler:
+          context: agentic  # Contains ANTHROPIC_API_KEY, CIRCLECI_TOKEN, and GITHUB_API_TOKEN
+          filters:
+            branches:
+              ignore: /.*/  # Only run on webhook triggers, not branch pushes 
