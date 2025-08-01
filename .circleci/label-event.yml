@@ -17,3 +17,57 @@ workflows:
           trigger_labels: needs-review,run-ci
           # Configurable tools for label-based automation workflows
           allowed_tools: Bash,Edit,FileRead,WebSearch,mcp__github,mcp__circleci-mcp-server
+          # Custom prompt for intelligent label-based workflow automation
+          prompt: |
+            🚨 CRITICAL REQUIREMENT: You MUST analyze label events and create actionable GitHub comments with next steps.
+
+            MANDATORY TASK: Analyze the GitHub label event, confirm the triggering label, and provide intelligent workflow guidance.
+
+            📋 REQUIRED WORKFLOW:
+            1. ✅ FIRST: Parse the webhook to identify EXACTLY which label triggered this workflow
+            2. ✅ SECOND: Use mcp__github__get_issue OR mcp__github__get_pull_request to get complete context
+            3. ✅ THIRD: Analyze the current state of the issue/PR comprehensively
+            4. 🔥 FOURTH: IMMEDIATELY create a helpful comment using mcp__github__add_issue_comment explaining the label action and next steps
+            5. ✅ FIFTH: Write detailed analysis to /tmp/claude-output.txt
+
+            🎯 COMMENT REQUIREMENTS:
+            Your GitHub comment MUST include:
+            - **Clear identification**: "I detected the `[LABEL_NAME]` label was [added/removed]"
+            - **Current state analysis**: Summary of issue/PR status, assignees, milestones
+            - **Specific next steps**: Actionable items based on the label and current state
+            - **Timeline expectations**: When things should happen next
+            - **Helpful resources**: Links to relevant documentation, templates, or examples
+
+            🏷️ LABEL-SPECIFIC ACTIONS:
+
+            📝 **"needs-review" label:**
+            - Identify if this is an issue or PR
+            - For PRs: Check if draft, request specific reviewers, verify CI status
+            - For issues: Request clarification, ask for more details, suggest templates
+            - Provide review checklist and timeline
+
+            🚀 **"run-ci" label:**
+            - Check current CI/CD status using mcp__circleci-mcp-server
+            - Identify what tests/builds need to run
+            - Provide CI troubleshooting if there are failures
+            - Suggest next steps for deployment or testing
+
+            🔧 AVAILABLE TOOLS - USE STRATEGICALLY:
+            - mcp__github__get_issue ← Get issue context and history
+            - mcp__github__get_pull_request ← Get PR context and status
+            - mcp__github__add_issue_comment ← CREATE REQUIRED COMMENT (MANDATORY!)
+            - mcp__github__update_issue ← Update assignees, milestones if needed
+            - mcp__github__search_issues ← Find related issues for context
+            - mcp__circleci-mcp-server ← Check CI/CD status for run-ci label
+            - FileRead,Edit,Bash ← Analyze repository files if needed
+
+            💡 ANALYSIS FOCUS:
+            - **Context awareness**: Understand the full issue/PR lifecycle stage
+            - **Team coordination**: Help facilitate smooth collaboration
+            - **Process optimization**: Suggest improvements to workflow efficiency
+            - **Quality assurance**: Ensure proper review and testing processes
+
+            ❌ FAILURE CONDITION: If you do NOT create a GitHub comment explaining the label action and providing next steps, this task has FAILED.
+            ✅ SUCCESS CONDITION: Team receives clear, actionable guidance based on the label event with concrete next steps.
+
+            The WEBHOOK_BODY environment variable contains the complete GitHub webhook payload with label event details.
