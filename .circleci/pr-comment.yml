@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.9
+  agentic-cli: cci-labs/agentic-cli@0.0.10
 
 workflows:
   pr_comment_workflow:
@@ -17,3 +17,5 @@ workflows:
           debug_mode: true
           require_trigger_phrase: true
           allowed_users: james-crowley
+          # Configurable tools for PR comment analysis and responses
+          allowed_tools: Bash,Edit,FileRead,WebSearch,mcp__github,mcp__circleci-mcp-server

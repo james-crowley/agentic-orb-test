@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.9
+  agentic-cli: cci-labs/agentic-cli@0.0.10
 
 workflows:
   issue_event_workflow:
@@ -15,3 +15,5 @@ workflows:
           circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
           allowed_actions: opened,assigned
+          # Configurable tools for issue event automation and management
+          allowed_tools: Bash,Edit,FileRead,WebSearch,mcp__github,mcp__circleci-mcp-server

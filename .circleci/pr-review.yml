@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.9
+  agentic-cli: cci-labs/agentic-cli@0.0.10
 
 workflows:
   pr_review_workflow:
@@ -16,3 +16,5 @@ workflows:
           circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
           exclude_draft: false
+          # Configurable tools for PR event analysis and review
+          allowed_tools: Bash,Edit,FileRead,WebSearch,mcp__github,mcp__circleci-mcp-server

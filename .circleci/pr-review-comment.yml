@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  agentic-cli: cci-labs/agentic-cli@0.0.9
+  agentic-cli: cci-labs/agentic-cli@0.0.10
 
 workflows:
   pr_review_comment_workflow:
@@ -14,3 +14,5 @@ workflows:
           github_api_token_var: GITHUB_API_TOKEN
           circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
+          # Configurable tools for PR review comment analysis
+          allowed_tools: Bash,Edit,FileRead,WebSearch,mcp__github,mcp__circleci-mcp-server
