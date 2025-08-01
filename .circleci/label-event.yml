@@ -7,15 +7,11 @@ workflows:
   label_event_workflow:
     jobs:
       - agentic-cli/label_event_claude:
-          context: agentic  # Contains ANTHROPIC_API_KEY, CIRCLECI_TOKEN, and GITHUB_API_TOKEN
+          context: agentic
           webhook_body: << pipeline.trigger_parameters.webhook.body >>
           claude_model: sonnet
           allowed_associations: OWNER,MEMBER,COLLABORATOR
           github_api_token_var: GITHUB_API_TOKEN
           circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
-          # Only trigger for specific important labels
-          trigger_labels: needs-review,bug,critical,enhancement,security
-          # Optional: Require specific labels to be present
-          # require_label: true
-          # Note: This job uses a pre-built prompt optimized for label event automation 
+          trigger_labels: needs-review,run-ci

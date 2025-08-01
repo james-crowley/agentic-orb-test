@@ -7,15 +7,11 @@ workflows:
   issue_event_workflow:
     jobs:
       - agentic-cli/issue_event_claude:
-          context: agentic  # Contains ANTHROPIC_API_KEY, CIRCLECI_TOKEN, and GITHUB_API_TOKEN
+          context: agentic
           webhook_body: << pipeline.trigger_parameters.webhook.body >>
           claude_model: sonnet
           allowed_associations: OWNER,MEMBER,COLLABORATOR
           github_api_token_var: GITHUB_API_TOKEN
           circleci_token_var: CIRCLECI_TOKEN
           debug_mode: true
-          # Trigger on specific issue actions
-          allowed_actions: opened,assigned,unassigned,closed,reopened,edited
-          # Optional: Only respond to specific users
-          # allowed_users: user1,user2
-          # Note: This job uses a pre-built prompt optimized for issue event automation 
+          allowed_actions: opened,assigned
