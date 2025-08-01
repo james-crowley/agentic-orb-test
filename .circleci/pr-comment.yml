@@ -1,0 +1,22 @@
+version: 2.1
+
+orbs:
+  agentic-cli: cci-labs/agentic-cli@0.0.9
+
+workflows:
+  pr_comment_workflow:
+    jobs:
+      - agentic-cli/pr_comment_claude:
+          context: agentic  # Contains ANTHROPIC_API_KEY, CIRCLECI_TOKEN, and GITHUB_API_TOKEN
+          webhook_body: << pipeline.trigger_parameters.webhook.body >>
+          claude_model: sonnet
+          trigger_phrase: "/agentic-pr"
+          allowed_associations: OWNER,MEMBER,COLLABORATOR
+          github_api_token_var: GITHUB_API_TOKEN
+          circleci_token_var: CIRCLECI_TOKEN
+          debug_mode: true
+          # Optional: Require trigger phrase to activate
+          require_trigger_phrase: true
+          # Optional: Only respond to specific users
+          # allowed_users: user1,user2
+          # Note: This job uses a pre-built prompt optimized for PR comment analysis 
